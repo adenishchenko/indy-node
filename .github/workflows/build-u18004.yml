@@ -1,0 +1,76 @@
+name: indy-node-build-u1804
+on: [ push, pull_request ]
+
+jobs:
+  decorator-checks:
+    name: Run decorator checks
+    needs: lint
+    runs-on: ubuntu-18.04
+    #TODO: move this to hyperledger?
+    container: udosson/indy-node-ci-u1804:latest
+    outputs:
+      matrix-common: ${{ steps.ctd.outputs.matrix-common }}
+      matrix-node: ${{ steps.ctd.outputs.matrix-node }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Check test decorators
+        id: ctd
+        run: |
+          chmod +x ./scripts/run_pytest_check.sh
+          ./scripts/run_pytest_check.sh
+
+  indy-common:
+    name: Build Indy Common
+    needs: decorator-checks
+    runs-on: ubuntu-18.04
+    #TODO: move this to hyperledger?
+    container: udosson/indy-node-ci-u1804:latest
+    strategy:
+      matrix: ${{fromJson(needs.decorator-checks.outputs.matrix-common)}}
+      fail-fast: false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install .[tests]
+        continue-on-error: true
+
+      - name: Run Indy Common tests
+        run: python3 -m pytest -l -m ${{ matrix.module }} -vv --junitxml=test-result-common-${{ matrix.module }}.xml indy_common
+
+
+  indy-node:
+    name: Build Indy Node
+    needs: decorator-checks
+    runs-on: ubuntu-18.04
+    #TODO: move this to hyperledger?
+    container: udosson/indy-node-ci-u1804:latest
+    strategy:
+      matrix: ${{fromJson(needs.decorator-checks.outputs.matrix-node)}}
+      fail-fast: false
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install .[tests]
+        continue-on-error: true
+
+      - name: Run Indy Node ${{ matrix.module }} tests
+        run: python3 -m pytest -l -m ${{ matrix.module }} -vv --junitxml=test-result-node-${{ matrix.module }}.xml indy_node
+
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-18.04
+    #TODO: move this to hyperledger?
+    container: udosson/indy-node-ci-u1804:latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: flake8
+        run: python3 -m flake8
