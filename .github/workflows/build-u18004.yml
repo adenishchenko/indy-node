@@ -28,8 +28,9 @@ jobs:
     #TODO: move this to hyperledger?
     container: udosson/indy-node-ci-u1804:latest
     strategy:
-      matrix: ${{fromJson(needs.decorator-checks.outputs.matrix-common)}}
-      fail-fast: false
+      matrix:
+        module: [indy_common]
+        slice: [1, 2]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -37,20 +38,19 @@ jobs:
       - name: Install dependencies
         run: pip install .[tests]
         continue-on-error: true
-
-      - name: Run Indy Common tests
-        run: python3 -m pytest -l -m ${{ matrix.module }} -vv --junitxml=test-result-common-${{ matrix.module }}.xml indy_common
-
+        
+      - name: Run Indy Common ${{ matrix.module }} test slice ${{ matrix.slice }}/2
+        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}/2
 
   indy-node:
     name: Build Indy Node
-    needs: decorator-checks
     runs-on: ubuntu-18.04
     #TODO: move this to hyperledger?
     container: udosson/indy-node-ci-u1804:latest
     strategy:
-      matrix: ${{fromJson(needs.decorator-checks.outputs.matrix-node)}}
-      fail-fast: false
+      matrix:
+        module: [indy_node]
+        slice: [1, 2, 3]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -58,10 +58,11 @@ jobs:
       - name: Install dependencies
         run: pip install .[tests]
         continue-on-error: true
+      
+      - name: Run Indy Node ${{ matrix.module }} test slice ${{ matrix.slice }}/3
+        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}/3
 
-      - name: Run Indy Node ${{ matrix.module }} tests
-        run: python3 -m pytest -l -m ${{ matrix.module }} -vv --junitxml=test-result-node-${{ matrix.module }}.xml indy_node
-
+     
 
   lint:
     name: Lint
