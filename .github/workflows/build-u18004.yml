@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         module: [indy_common]
-        slice: [1, 2]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -19,8 +18,8 @@ jobs:
         run: pip install .[tests]
         continue-on-error: true
         
-      - name: Run Indy Common ${{ matrix.module }} test slice ${{ matrix.slice }}/2
-        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}/2
+      - name: Run Indy Common ${{ matrix.module }} test slice ${{ matrix.slice }}
+        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}
 
   indy-node:
     name: Build Indy Node
@@ -30,7 +29,6 @@ jobs:
     strategy:
       matrix:
         module: [indy_node]
-        slice: [1, 2, 3]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -39,8 +37,8 @@ jobs:
         run: pip install .[tests]
         continue-on-error: true
       
-      - name: Run Indy Node ${{ matrix.module }} test slice ${{ matrix.slice }}/3
-        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}/3
+      - name: Run Indy Node ${{ matrix.module }} test slice ${{ matrix.slice }}
+        run: python3 -m pytest -l -vv --junitxml=test-result-plenum-${{ matrix.module }}-${{ matrix.slice }}.xml" --dir "${{ matrix.module }}" --output "test-result-indy-${{ matrix.slice }}.txt" --test-only-slice "${{ matrix.slice }}
 
      
 
