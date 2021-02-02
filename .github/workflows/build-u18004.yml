@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-18.04
     #TODO: move this to hyperledger?
     container: udosson/indy-node-ci-u1804:latest
-    strategy:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -24,7 +23,6 @@ jobs:
     runs-on: ubuntu-18.04
     #TODO: move this to hyperledger?
     container: udosson/indy-node-ci-u1804:latest
-    strategy:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
