@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${GITHUB_WORKSPACE}/cache
-          key: ${{ env.CACHE_KEY_BUILD}}
+          key: ${{ env.CACHE_KEY_CI_IMAGE}}
 
       - name: If NOT found in cache, build and push image.
         if: steps.cache-image.outputs.cache-hit != 'true'
