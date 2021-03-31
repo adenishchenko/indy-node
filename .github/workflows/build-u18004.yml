@@ -46,7 +46,7 @@ jobs:
       - name: If NOT found in cache, build and push image.
         if: steps.cache-image.outputs.cache-hit != 'true'
         run: |
-          echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
+          echo ${{ secrets.GH_PAT }} | docker login ghcr.io --username ${{ secrets.GH_USER }} --password-stdin
           docker build -f .github/workflows/Dockerfile.${{ env.DOCKER_FILE_POSTFIX }} --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} .
           docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
           docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
