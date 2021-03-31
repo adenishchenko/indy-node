@@ -1,49 +1,97 @@
-name: indy-node-build-u1804
+name: indy-node-build-u2004
 on: [ push, pull_request ]
 
 jobs:
-  indy-common:
-    name: Build Indy Common
-    runs-on: ubuntu-18.04
-    #TODO: move this to hyperledger?
-    container: udosson/indy-node-ci-u1804:latest
+  setup-workflow:
+    runs-on: ubuntu-20.04
+    outputs:
+      CACHE_KEY_CI_IMAGE: ${{ steps.init.outputs.CACHE_KEY_CI_IMAGE }}
+      GITHUB_REPOSITORY_NAME: ${{ steps.init.outputs.GITHUB_REPOSITORY_NAME }}
     steps:
-      - name: Check out code
+      - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: pip install .[tests]
-        continue-on-error: true
         
-      - name: Run Indy Common test
-        run: python3 -m pytest -l -vv --junitxml=test-result-indy-common.xml --dir indy_common --output "test-result-indy-common.txt"
+      - name: Set outputs
+        id: init
+        run: |
+          echo "::set-output name=CACHE_KEY_CI_IMAGE::${{ hashFiles('devops') }}-cache-v1"
+          # Convert the GitHub repository name to lowercase
+          echo "::set-output name=GITHUB_REPOSITORY_NAME::$(echo ${GITHUB_REPOSITORY,,})"
+          
 
-  indy-node:
-    name: Build Indy Node
-    runs-on: ubuntu-18.04
-    #TODO: move this to hyperledger?
-    container: udosson/indy-node-ci-u1804:latest
+  test-image:
+    # Reference to workflow-setup job is required to access its various outputs.
+    needs: setup-workflow
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      CACHE_KEY_BUILD: ${{ needs.workflow-setup.outputs.CACHE_KEY_BUILD }}
+      GITHUB_REPOSITORY_NAME: ${{ needs.workflow-setup.outputs.GITHUB_REPOSITORY_NAME }}
+      DOCKER_FILE_POSTFIX: ${{ needs.workflow-setup.outputs.DOCKER_FILE_POSTFIX }}
     steps:
-      - name: Check out code
+      - name: Git checkout
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: pip install .[tests]
-        continue-on-error: true
+      - name: Try load from cache.
+        id: cache-image
+        uses: actions/cache@v2
+        with:
+          path: ${GITHUB_WORKSPACE}/cache
+          key: ${{ env.CACHE_KEY_BUILD}}
+
+      - name: If NOT found in cache, build and push image.
+        if: steps.cache-image.outputs.cache-hit != 'true'
+        run: |
+          echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
+          docker build -f .github/workflows/test/Dockerfile.${{ env.DOCKER_FILE_POSTFIX }} --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_BUILD }} .
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-build:${{ env.CACHE_KEY_BUILD }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
+          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
+          mkdir -p ${GITHUB_WORKSPACE}/cache
+          touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_BUILD }}
+
+
+#   indy-common:
+#     name: Build Indy Common
+#     runs-on: ubuntu-latest
+#     #TODO: move this to hyperledger?
+#     container: udosson/indy-node-ci-u1804:latest
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v2
+
+#       - name: Install dependencies
+#         run: pip install .[tests]
+#         continue-on-error: true
+        
+#       - name: Run Indy Common test
+#         run: python3 -m pytest -l -vv --junitxml=test-result-indy-common.xml --dir indy_common --output "test-result-indy-common.txt"
+
+#   indy-node:
+#     name: Build Indy Node
+#     runs-on: ubuntu-18.04
+#     #TODO: move this to hyperledger?
+#     container: udosson/indy-node-ci-u1804:latest
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v2
+
+#       - name: Install dependencies
+#         run: pip install .[tests]
+#         continue-on-error: true
       
-      - name: Run Indy Node test
-        run: python3 -m pytest -l -vv --junitxml=test-result-indy-node.xml --dir indy_node --output "test-result-indy-node.txt"
+#       - name: Run Indy Node test
+#         run: python3 -m pytest -l -vv --junitxml=test-result-indy-node.xml --dir indy_node --output "test-result-indy-node.txt"
 
      
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-18.04
-    #TODO: move this to hyperledger?
-    container: udosson/indy-node-ci-u1804:latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+#   lint:
+#     name: Lint
+#     runs-on: ubuntu-18.04
+#     #TODO: move this to hyperledger?
+#     container: udosson/indy-node-ci-u1804:latest
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v2
 
-      - name: flake8
-        run: python3 -m flake8
+#       - name: flake8
+#         run: python3 -m flake8
