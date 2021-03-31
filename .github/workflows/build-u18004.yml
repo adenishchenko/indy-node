@@ -5,9 +5,9 @@ jobs:
   setup-workflow:
     runs-on: ubuntu-20.04
     outputs:
-      CACHE_KEY_CI_IMAGE: ${{ steps.init.outputs.CACHE_KEY_CI_IMAGE }}
-      CACHE_KEY_BUILD_IMAGE: ${{ steps.init.outputs.CACHE_KEY_BUILD_IMAGE }}
-      GITHUB_REPOSITORY_NAME: ${{ steps.init.outputs.GITHUB_REPOSITORY_NAME }}
+      CACHE_KEY_CI_IMAGE: ${{ steps.cache.outputs.CACHE_KEY_CI_IMAGE }}
+      CACHE_KEY_BUILD_IMAGE: ${{ steps.cache.outputs.CACHE_KEY_BUILD_IMAGE }}
+      GITHUB_REPOSITORY_NAME: ${{ steps.cache.outputs.GITHUB_REPOSITORY_NAME }}
       DOCKER_FILE_POSTFIX: ${{ steps.cache.outputs.DOCKER_FILE_POSTFIX }}
     steps:
       - name: Checkout
