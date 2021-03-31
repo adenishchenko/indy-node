@@ -43,7 +43,7 @@ jobs:
         if: steps.cache-image.outputs.cache-hit != 'true'
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
-          docker build -f .github/workflows/test/Dockerfile.${{ env.DOCKER_FILE_POSTFIX }} --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_BUILD }} .
+          docker build -f .github/workflows/Dockerfile.${{ env.DOCKER_FILE_POSTFIX }} --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_BUILD }} .
           docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-build:${{ env.CACHE_KEY_BUILD }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
           docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
           mkdir -p ${GITHUB_WORKSPACE}/cache
