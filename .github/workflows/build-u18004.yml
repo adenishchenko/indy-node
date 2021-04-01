@@ -47,9 +47,9 @@ jobs:
         if: steps.cache-image.outputs.cache-hit != 'true'
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
-          docker build -f .github/workflows/Dockerfile --no-cache -t adenishchenko/indy-node/node-build:${{ env.CACHE_KEY_CI_IMAGE }} .
-          docker tag adenishchenko/indy-node/node-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/adenishchenko/indy-node/node-build:latest
-          docker push ghcr.io/adenishchenko/indy-node/node-build:latest
+          docker build -f .github/workflows/Dockerfile --no-cache -t adenishchenkoq/indy-node/node-build:${{ env.CACHE_KEY_CI_IMAGE }} .
+          docker tag adenishchenkoq/indy-node/node-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/adenishchenkoq/indy-node/node-build:latest
+          docker push ghcr.io/adenishchenkoq/indy-node/node-build:latest
           mkdir -p ${GITHUB_WORKSPACE}/cache
           touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_CI_IMAGE }}
 
