@@ -48,8 +48,8 @@ jobs:
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
           docker build -f .github/workflows/Dockerfile --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} .
-          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build
-          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:latest
+          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:latest
           mkdir -p ${GITHUB_WORKSPACE}/cache
           touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_CI_IMAGE }}
 
