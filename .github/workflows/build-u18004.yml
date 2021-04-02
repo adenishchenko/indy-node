@@ -43,8 +43,8 @@ jobs:
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
           docker build -f .github/workflows/lint/Dockerfile --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint:${{ env.CACHE_KEY_LINT }} .
-          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint:${{ env.CACHE_KEY_LINT }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint:latest
-          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint:latest
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint:${{ env.CACHE_KEY_LINT }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint
+          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-lint
           mkdir -p ${GITHUB_WORKSPACE}/cache
           touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_LINT }}
   build-test-image:
@@ -68,8 +68,8 @@ jobs:
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
           docker build -f .github/workflows/build/Dockerfile --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build:${{ env.CACHE_KEY_BUILD }} .
-          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build:${{ env.CACHE_KEY_BUILD }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build:latest
-          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build:latest
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build:${{ env.CACHE_KEY_BUILD }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build
+          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/indy-node-build
           mkdir -p ${GITHUB_WORKSPACE}/cache
           touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_BUILD }}
   indy_node:
