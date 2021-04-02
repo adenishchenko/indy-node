@@ -48,12 +48,40 @@ jobs:
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
           docker build -f .github/workflows/Dockerfile --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} .
-          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/node-test:${{ env.CACHE_KEY_CI_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-test:${{ env.DOCKER_FILE_POSTFIX }}
           docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
           mkdir -p ${GITHUB_WORKSPACE}/cache
           touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_CI_IMAGE }}
 
+  build-image:
+    # Reference to workflow-setup job is required to access its various outputs.
+    needs: workflow-setup
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 1
+      CACHE_KEY_BUILD_IMAGE: ${{ needs.workflow-setup.outputs.CACHE_KEY_BUILD_IMAGE }}
+      GITHUB_REPOSITORY_NAME: ${{ needs.workflow-setup.outputs.GITHUB_REPOSITORY_NAME }}
+      DOCKER_FILE_POSTFIX: ${{ needs.workflow-setup.outputs.DOCKER_FILE_POSTFIX }}
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
 
+      - name: Try load from cache.
+        id: cache-image
+        uses: actions/cache@v2
+        with:
+          path: ${GITHUB_WORKSPACE}/cache
+          key: ${{ env.CACHE_KEY_BUILD_IMAGE }}
+
+      - name: If NOT found in cache, build and push image.
+        if: steps.cache-image.outputs.cache-hit != 'true'
+        run: |
+          echo ${{ secrets.CR_PAT }} | docker login ghcr.io --username ${{ secrets.CR_USER }} --password-stdin
+          docker build -f .github/workflows/Dockerfile --no-cache -t ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_BUILD_IMAGE }} .
+          docker tag ${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.CACHE_KEY_BUILD_IMAGE }} ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
+          docker push ghcr.io/${{ env.GITHUB_REPOSITORY_NAME }}/node-build:${{ env.DOCKER_FILE_POSTFIX }}
+          mkdir -p ${GITHUB_WORKSPACE}/cache
+          touch ${GITHUB_WORKSPACE}/cache/${{ env.CACHE_KEY_BUILD_IMAGE }}
 #   indy-common:
 #     name: Build Indy Common
 #     runs-on: ubuntu-latest
