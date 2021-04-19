@@ -31,6 +31,9 @@
     * [TRANSACTION_AUTHOR_AGREEMENT_AML](#transaction_author_agreement_AML)
     * [TRANSACTION_AUTHOR_AGREEMENT_DISABLE](#transaction_author_agreement_disable)
     * [LEDGERS_FREEZE](#ledgers_freeze)
+    * [SET_FEES](#set_fees)
+    * [GET_FEES](#get_fees)
+    * [GET_FEE](#get_fee)
     
 
 ## General Information
@@ -2128,6 +2131,187 @@ Freeze deprecated ledgers (default ledgers such as the domain, config, pool, and
             "from": "L5AD5g65TDQr1PPHHRoiGf",
             "value": "4X3skpoEK2DRgZxQ9PwuEvCJpL8JHdQ8X4HDDFyztgqE15DM2ZnkvrAh9bQY16egVinZTzwHqznmnkaFM4jjyDgd"
         }]
+    }
+}
+```
+
+## SET_FEES transaction request
+```
+{
+    "reqId": <int>,             //random identifier
+    "protocolVersion": <int>,   // the version of the client/node communication protocol
+    "operation": {
+        "type": "20000",
+        "fees": {
+            <str: feesAlias>: <int: amount>,
+        }
+    },
+}
+```
+
+Example:
+```
+{
+    "reqId": 1527801087197612,
+    "protocolVersion": 1,
+    "operation": {
+        "type": "20000",
+        "fees": {
+            "1": 4,
+            "10001": 8
+        }
+    }
+}
+```
+
+## GET_FEES transaction request
+```
+{
+    "identifier": <str>,        // the submitter DID
+    "reqId": <int>,             // a random identifier
+    "protocolVersion": <int>,   // the version of the client/node communication protocol
+    "operation": {
+        "type": "20001"
+    }
+}
+```
+Example:
+```
+{
+    "identifier": "6ouriXMZkLeHsuXrN1X1fd",
+    "reqId": 47660,
+    "protocolVersion": 1,
+    "operation": {
+        "type": "20001"
+    }
+}
+```
+
+## GET_FEES response
+```
+{
+    "op": "REPLY",
+    "result": {
+        "identifier": <str>,        // the submitter DID
+        "reqId": <int>,             // a random identifier
+        "type": "20001",
+        "fees": {
+            <str: feesAlias>: <int: amount>,
+        },
+        "state_proof": {
+            {
+                "participants": [ <str>, ], // the nodes that participated in consensus
+                "signature": <str> // the BLS signature of the nodes
+                "value":
+                {
+                    "ledger_id": <int>, // the associated ledger where the state proof came from
+                    "pool_state_root_hash": <str>, // the state proof root hash of the pool ledger
+                    "state_root_hash": <str>, // the state proof root hash of the total ledgers
+                    "timestamp": <int>, // the time the transaction was committed
+                    "txn_root_hash": <str> // the transaction root hash of the transaction on a specific ledger
+                }
+            },
+            "rootHash": <str>,      // the root hash of the transaction
+            "proof_nodes": <str>,   // the hash of each node in the path
+        }
+    }
+}
+```
+
+Example:
+```
+{
+    "op": "REPLY",
+    "result":
+    {
+        "identifier": "6ouriXMZkLeHsuXrN1X1fd",
+        "reqId": 10378,
+        "type": "20001",
+        "fees":
+        {
+            "1": 4,
+            "10001": 8
+        },
+        "state_proof":
+        {
+            "multi_signature": {//TODO add valid json string in here},
+            "proof_nodes": "29qFIGZlZXOT0pF7IjEiOjQsIjEwMDAxIjo4fQ==",
+            "root_hash": "5BU5Rc3sRtTJB6tVprGiTSqiRaa9o6ei11MjH4Vu16ms"
+        },
+    }
+}
+```
+
+## GET_FEE transaction request
+```
+{
+    "identifier": <str>,        // the submitter DID
+    "reqId": <int>,             // a random identifier
+    "protocolVersion": <int>,   // the version of the client/node communication protocol
+    "operation": {
+        "type": "20001",
+        "alias": <str: feesAlias>
+    }
+}
+```
+Example:
+```
+{
+    "identifier": "6ouriXMZkLeHsuXrN1X1fd",
+    "reqId": 47660,
+    "protocolVersion": 1,
+    "operation": {
+        "type": "20001",
+        "alias": "nym_fees"
+    }
+}
+```
+
+## GET_FEE response
+```
+{
+    "op": "REPLY",
+    "result": {
+        "identifier": <str>,        // the submitter DID
+        "reqId": <int>,             // a random identifier
+        "type": "20001",
+        "fee": <int: amount>,
+        "state_proof": {
+            {
+                "participants": [ <str>, ], // the nodes that participated in consensus
+                "signature": <str> // the BLS signature of the nodes
+                "value":
+                {
+                    "ledger_id": <int>, // the associated ledger where the state proof came from
+                    "pool_state_root_hash": <str>, // the state proof root hash of the pool ledger
+                    "state_root_hash": <str>, // the state proof root hash of the total ledgers
+                    "timestamp": <int>, // the time the transaction was committed
+                    "txn_root_hash": <str> // the transaction root hash of the transaction on a specific ledger
+                }
+            },
+            "rootHash": <str>,      // the root hash of the transaction
+            "proof_nodes": <str>,   // the hash of each node in the path
+        }
+    }
+}
+```
+
+Example:
+```
+{
+    "op": "REPLY",
+    "result":
+    {
+        "identifier": "6ouriXMZkLeHsuXrN1X1fd",
+        "reqId": 10378,
+        "type": "20001",
+        "fee": 10,
+        "state_proof":
+        {
+            "multi_signature": {//TODO add valid json string in here},
+            "proof_nodes": "29qFIGZlZXOT0pF7IjEiOjQsIjEwMDAxIjo4fQ==",
+            "root_hash": "5BU5Rc3sRtTJB6tVprGiTSqiRaa9o6ei11MjH4Vu16ms"
+        },
     }
 }
 ```

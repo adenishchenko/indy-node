@@ -746,6 +746,30 @@
         
 </table>
 
+# Fees related auth_rule
+
+<table class="tg">
+  <tr>
+    <th>Transaction type</th>
+    <th>Action</th>
+    <th>Field</th>
+    <th>Previous value</th>
+    <th>New value</th>
+    <th>Who can</th>
+    <th>Description</th>
+  </tr>
+
+  <tr>
+    <td>SET_FEES</td>
+    <td>EDIT</td>
+    <td>*</td>
+    <td>*</td>
+    <td>*</td>
+    <td>3 TRUSTEEs</td>
+    <td>Setting fees for action/actions</td>
+  </tr>
+</table>
+
 ### Endorser using
 
 - Endorser is required only when the transaction is endorsed, that is signed by someone else besides the author.
