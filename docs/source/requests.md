@@ -3018,16 +3018,12 @@ The request has static and dynamic validations. Static validation checks to avoi
 ```
 
 ## SET_FEES
+
+Set fees value. Fees have follow structure:
+
 ```
-{
-    "reqId": <int>,             //random identifier
-    "protocolVersion": <int>,   // the version of the client/node communication protocol
-    "operation": {
-        "type": "20000",
-        "fees": {
-            <str: feesAlias>: <int: amount>,
-        }
-    },
+"fees": {
+    <str: feesAlias>: <int: amount>,
 }
 ```
 
@@ -4340,6 +4336,7 @@ Get whole list of frozen ledgers. Reply has follow state format data:
 ```
 
 ## GET_FEES
+
 Get whole list of fees. Reply has follow state format data:
 
 ```
@@ -4386,7 +4383,8 @@ Get whole list of fees. Reply has follow state format data:
 ```
 
 ## GET_FEE
-Get fee. Reply has follow state format data:
+
+Get a fee. Reply has follow state format data:
 
 ```
 "fee": <int: amount>

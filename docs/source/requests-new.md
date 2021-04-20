@@ -1452,7 +1452,14 @@ The request has static and dynamic validations. Static validation checks to avoi
 ```
 
 ## SET_FEES
-Set value of fees.
+
+Set fees value. Fees have follow structure:
+
+```
+"fees": {
+    <str: feesAlias>: <int: amount>,
+}
+```
 
 *Request Example*:
 ```
@@ -2047,6 +2054,7 @@ Get whole list of frozen ledgers. Reply has follow state format data:
 ```
 
 ## GET_FEES
+
 Get whole list of fees. Reply has follow state format data:
 
 ```
@@ -2093,7 +2101,8 @@ Get whole list of fees. Reply has follow state format data:
 ```
 
 ## GET_FEE
-Get fee. Reply has follow state format data:
+
+Get a fee. Reply has follow state format data:
 
 ```
 "fee": <int: amount>

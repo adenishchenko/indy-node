@@ -2133,21 +2133,17 @@ Freeze deprecated ledgers (default ledgers such as the domain, config, pool, and
 }
 ```
 
-## SET_FEES transaction request
+## SET_FEES
+
+Set fees value. Fees have follow structure:
+
 ```
-{
-    "reqId": <int>,             //random identifier
-    "protocolVersion": <int>,   // the version of the client/node communication protocol
-    "operation": {
-        "type": "20000",
-        "fees": {
-            <str: feesAlias>: <int: amount>,
-        }
-    },
+"fees": {
+    <str: feesAlias>: <int: amount>,
 }
 ```
 
-Example:
+*Request Example*:
 ```
 {
     "reqId": 1527801087197612,
