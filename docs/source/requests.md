@@ -3027,7 +3027,7 @@ Set fees value. Fees have follow structure:
 }
 ```
 
-*Request Example*:
+*Transaction Example*:
 ```
 {
     "reqId": 1527801087197612,
@@ -4374,7 +4374,21 @@ Get whole list of fees. Reply has follow state format data:
         },
         "state_proof":
         {
-            "multi_signature": {//TODO add valid json string in here},
+            "multi_signature":{
+                "value":{
+                    "pool_state_root_hash":"4bCEk76QsB6p3yCiDntMedpeZmiQtdH9NRpcFyvaLHhc",
+                    "state_root_hash":"HUv35b31eqncHZ1R8xMQW9pJnCBqAaUVrfCA8AeTtx6u",
+                    "timestamp":1613736202,
+                    "ledger_id":2,
+                    "txn_root_hash":"BY6PV9SrV1dgQgxy2kpeTLESQfazTYoLdLZfjzVmcLeV"
+                },
+                "signature":"R8FRHVg51YiY5nS8Hh8iXNa1ZPKjrQMmurnrGek2A7QMKq79Pws4DLhgcVgf66PSJGEPjmyASYxFziEnubY1RFHQiE7ZToLZqW4oJt11hhL1XgXwrdswyqTQjuyxx5nzjyE4AzyTvs3BywD54s3w3mUhLG3QWwBp1uTX8agLEKZDkK",
+                "participants":[
+                    "Gamma",
+                    "Delta",
+                    "Beta"
+                ]
+            },
             "proof_nodes": "29qFIGZlZXOT0pF7IjEiOjQsIjEwMDAxIjo4fQ==",
             "root_hash": "5BU5Rc3sRtTJB6tVprGiTSqiRaa9o6ei11MjH4Vu16ms"
         },
@@ -4384,7 +4398,7 @@ Get whole list of fees. Reply has follow state format data:
 
 ## GET_FEE
 
-Get a fee. Reply has follow state format data:
+Get a fee value by a fee alias:
 
 ```
 "fee": <int: amount>

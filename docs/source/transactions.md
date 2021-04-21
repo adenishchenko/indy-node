@@ -2143,7 +2143,7 @@ Set fees value. Fees have follow structure:
 }
 ```
 
-*Request Example*:
+*Transaction  Example*:
 ```
 {
     "reqId": 1527801087197612,
